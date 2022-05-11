@@ -14,24 +14,23 @@ def get_method():
 
 
 @app.post("/method", status_code=201)
-def get_method():
+def post_method():
     return {"method": "POST"}
 
 
 @app.put("/method")
-def get_method():
+def put_method():
     return {"method": "PUT"}
 
 
 @app.options("/method")
-def get_method():
+def options_method():
     return {"method": "OPTIONS"}
 
 
 @app.delete("/method")
-def get_method():
+def delete_method():
     return {"method": "DELETE"}
-
 
 
 class HerokuApp:
