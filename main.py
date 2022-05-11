@@ -13,7 +13,7 @@ def get_method():
     return {"method": "GET"}
 
 
-@app.post("/method")
+@app.post("/method", status_code=201)
 def get_method():
     return {"method": "POST"}
 
