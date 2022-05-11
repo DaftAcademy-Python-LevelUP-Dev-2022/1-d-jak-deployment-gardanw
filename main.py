@@ -72,7 +72,7 @@ def put_events(request: GiveEventDataRq):
     date_added = datetime.date.today()
     response = GiveEventDataResp(id=id, date=date, event=event, date_added=str(date_added))
     events_list.append(response)
-    return response.json()
+    return response
 
 
 class HerokuApp:
