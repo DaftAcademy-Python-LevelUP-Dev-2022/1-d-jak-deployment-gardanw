@@ -1,8 +1,11 @@
-from fastapi import FastAPI, status, HTTPException
+from fastapi import FastAPI, status, HTTPException, Request
 import datetime
+
+from pydantic import BaseModel
 
 app = FastAPI()
 events_list = []
+
 
 @app.get("/")
 def root():
@@ -44,19 +47,32 @@ def get_day(name: str = "", number: int = 0):
     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
 
 
-@app.put("/events")
-def put_events(**kwargs):
+class GiveEventDataRq(BaseModel):
+    date: str
+    event: str
+
+
+class GiveEventDataResp(BaseModel):
+    id: int
+    date: str
+    event: str
+    date_added: str
+
+
+@app.put("/events", response_model=GiveEventDataResp)
+def put_events(request: GiveEventDataRq):
+    rq = request.dict()
     id = len(events_list)
-    date = kwargs.get("date", None)
+    date = rq.get("date", None)
     try:
         datetime.date.fromisoformat(date)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=e)
-    event = kwargs.get("event", None)
+    event = rq.get("event", None)
     date_added = datetime.date.today()
-    event_dict = {"id": id, "date": date, "event": event, "date_added": date_added}
-    events_list.append(event_dict)
-    return event
+    response = GiveEventDataResp(id=id, date=date, event=event, date_added=str(date_added))
+    events_list.append(response)
+    return response.json()
 
 
 class HerokuApp:
