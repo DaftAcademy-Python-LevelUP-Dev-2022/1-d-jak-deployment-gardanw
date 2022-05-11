@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 
 app = FastAPI()
 
@@ -31,6 +31,16 @@ def options_method():
 @app.delete("/method")
 def delete_method():
     return {"method": "DELETE"}
+
+
+days = {"monday": 1, "tuesday": 2, "wednesday": 3, "thursday": 4, "friday": 5, "saturday": 6, "sunday": 7}
+
+
+@app.get("/day")
+def get_day(name: str = "", number: int = 0):
+    if name in days and days[name] == number:
+        return status.HTTP_200_OK
+    return status.HTTP_400_BAD_REQUEST
 
 
 class HerokuApp:
