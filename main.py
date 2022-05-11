@@ -1,7 +1,8 @@
 from fastapi import FastAPI, status, HTTPException
+import datetime
 
 app = FastAPI()
-
+events_list = []
 
 @app.get("/")
 def root():
@@ -41,6 +42,21 @@ def get_day(name: str = "", number: int = 0):
     if name in days and days[name] == number:
         return status.HTTP_200_OK
     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+
+
+@app.put("/events")
+def put_events(**kwargs):
+    id = len(events_list)
+    date = kwargs.get("date", None)
+    try:
+        datetime.date.fromisoformat(date)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=e)
+    event = kwargs.get("event", None)
+    date_added = datetime.date.today()
+    event_dict = {"id": id, "date": date, "event": event, "date_added": date_added}
+    events_list.append(event_dict)
+    return event
 
 
 class HerokuApp:
