@@ -76,5 +76,18 @@ def put_events(request: GiveEventDataRq):
     return response
 
 
+@app.get("/events/{date}")
+def get_events(date: str):
+    try:
+        datetime.date.fromisoformat(date)
+    except ValueError as e:
+        print("ERROR:", e)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+    date_events = [event for event in app.events_list if event.date == date]
+    if len(date_events) == 0:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    return date_events
+
+
 class HerokuApp:
     app_url = "https://z1-d-jak-deployment-gardanw.herokuapp.com/"  # Fill your heroku app url here
