@@ -4,7 +4,7 @@ import datetime
 from pydantic import BaseModel
 
 app = FastAPI()
-events_list = []
+app.events_list = []
 
 
 @app.get("/")
@@ -55,23 +55,24 @@ class GiveEventDataRq(BaseModel):
 class GiveEventDataResp(BaseModel):
     id: int
     date: str
-    event: str
+    name: str
     date_added: str
 
 
 @app.put("/events", response_model=GiveEventDataResp)
 def put_events(request: GiveEventDataRq):
     rq = request.dict()
-    id = len(events_list)
+    id = len(app.events_list)
     date = rq.get("date", None)
     try:
         datetime.date.fromisoformat(date)
     except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=e)
+        print("ERROR:", e)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
     event = rq.get("event", None)
     date_added = datetime.date.today()
-    response = GiveEventDataResp(id=id, date=date, event=event, date_added=str(date_added))
-    events_list.append(response)
+    response = GiveEventDataResp(id=id, date=date, name=event, date_added=str(date_added))
+    app.events_list.append(response)
     return response
 
 
